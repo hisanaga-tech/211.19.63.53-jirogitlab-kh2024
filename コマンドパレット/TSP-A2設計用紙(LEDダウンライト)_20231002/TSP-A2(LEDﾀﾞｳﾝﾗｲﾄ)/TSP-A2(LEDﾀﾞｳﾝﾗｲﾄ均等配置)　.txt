@@ -1,0 +1,392 @@
+procedure TSPA2_DL;
+LABEL 10,99,88;
+
+CONST
+	cMarginX=270+230;
+	cMarginY=50;
+VAR
+	done,abort,rtype,ltype:boolean;
+	L,D1,D2,a,b,n,p,x,y:REAL;
+	T,str:STRING;
+     item:integer;
+LK,RK:boolean;
+
+function makedialog:boolean;
+var
+	dummy,sh,sv:INTEGER;
+     item:integer;
+BEGIN
+pushattrs;
+pushattrs;
+
+
+	GetScreen(dummy,dummy,sh,sv);
+	sh:=sh div 2;
+	sv:=sv div 2;
+	BeginDialog(1,1,sh-cMarginX div 2,sv-cMarginX div 2,sh+cMarginY div 2,sv+cMarginY div 2);
+			AddButton('OK',1,1,20+20,200,90+20,230);
+			AddButton('Cancel',32,1,130,200,200,230);
+   
+          AddField('    　　　　   - KITCHEN HOUSE -',40,1,10,1,200,21);
+			AddField('    　　　　   ∮ TSP-A2設計用紙',41,1,10,20,200,40);
+			AddField('♪ 巾寸法'    ,  11,1,8,45,140+50,60);
+			AddField('♪ 奥行寸法',  12,1,8,65,140+50,80);
+			AddField('♪ LED位置 (奥～LEDの芯)'     ,13,1,8,85,140+50,100);
+			AddField('♪ LEDのピッチ',  14,1,8,105,140+50,120);
+
+			AddField('1200',31,2,150+50,45,190+50,60);
+			AddField('338',2,2,150+50,65,190+50,80);
+			AddField('240',3,2,150+50,85,190+50,100);
+			AddField('400',4,2,150+50,105,190+50,120);
+
+   {       AddField('♪ 左右木口仕上げ (*仕上げるとEKになります！)',5,1,8,130,250,145);
+			AddButton('左側木口仕上げ',6,2,20,150,250,165);
+			AddButton('右側木口仕上げ',7,2,20,170,250,185);
+}
+	EndDialog;
+
+  getdiaLOG(1);
+
+  DONE:=FALSE;
+  ABORT:=FALSE;
+  RTYPE:=TRUE; 
+ LTYPE:=FALSE;
+ 
+  SELFIELD(31);
+
+
+REPEAT
+    DIALOGEVENT(ITEM);
+
+{チェックボックス ON/OFF---------------------------------------------------}
+
+{IF (item=6) OR (item=7) then
+SetItem(item,NOT ItemSel(item));
+}
+      IF ITEM=1 THEN 
+            DONE:=TRUE;
+      IF ITEM=32 THEN  BEGIN
+            DONE:=TRUE;
+            ABORT:=TRUE;
+
+       END;
+      
+UNTIL DONE;
+   
+   STR:=GETFIELD(31);
+    L:=STR2NUM(STR);
+   STR:=GETFIELD(2);
+    D1:=STR2NUM(STR);
+   STR:=GETFIELD(3);
+    D2:=STR2NUM(STR);
+  STR:=GETFIELD(4);
+    a:=STR2NUM(STR);
+{
+LK:=ItemSel(6);
+RK:=ItemSel(7);
+}
+
+CLRDIALOG;
+
+
+ if item=1 then 
+     makedialog:=true
+   else 
+      makedialog:=false;
+  
+END;
+
+
+{ MAIN PROGRAM }
+
+  
+BEGIN
+textsize(14);
+textjust(1);
+TextVerticalAlign(5);
+
+ClrMessage;
+   
+if makedialog=true then
+     BEGIN
+
+n:=round(L/a)-1;
+
+b:=(L-a*n)/2;
+  
+    ClrMessage;
+
+dselectall;
+     getpt(x,y);
+
+BeginGroup;
+
+fillpat(0);
+penpat(2);
+
+rect(x,y+d1,x+L,y);
+{フロント木口 △--------------------------------------------}
+closepoly;
+poly(x+L/2-70,y,x+L/2-70-25,y-60,x+L/2-70+25,y-60);
+{左側木口 △--------------------------------------------}
+closepoly;
+poly(x,y+D1/2,x-60,y+D1/2+25,x-60,y+D1/2-25);
+{右側木口 △--------------------------------------------}
+closepoly;
+poly(x+L,y+D1/2,x+L+60,y+D1/2+25,x+L+60,y+D1/2-25);
+{バック木口 △--------------------------------------------}
+closepoly;
+poly(x+L/2-70,y+D1,x+L/2-70-25,y+D1+60,x+L/2-70+25,y+D1+60);
+
+
+{ﾀﾞｳﾝﾗｲﾄ 円とタテ溝　繰り返し---------------------------------------------------}
+p:=1;
+repeat
+penpat(2);
+
+oval(x+b-56/2+a*(p-1),y+(D1-D2)+56/2,x+b+56/2+a*(p-1),y+(D1-D2)-56/2);
+{ﾀﾃ溝}
+moveto(x+b+a*(p-1)-56/2,Y+D1-D2);
+        line(0,D2-35);
+
+moveto(x+b+a*(p-1)+56/2,Y+D1-D2);
+        line(0,D2-35);
+{ﾐｿﾞ幅寸法}
+    lineardim(x+b+a*(p-1)-56/2,Y+D1-10,x+b+a*(p-1)+56/2,Y+D1-10,150,0,769,259,1);
+
+{ﾀﾞｳﾝﾗｲﾄ ｾﾝﾀｰﾗｲﾝ}
+moveto(x+b+a*(p-1),Y-10);
+penpat(-6);
+        line(0,D1+10);
+
+moveto(x+b+a*(p-1)+50,Y+D1-D2);
+        line(-100,0);
+
+
+p:=p+1;
+
+until (p=n+2) ;
+penpat(2);
+{ヨコ溝寸法線}
+    lineardim(x+L,y+D1,x+L,y+D1-35,300,1,769,259,1);
+
+
+{上部ヨコ寸法線　繰り返し-----------------------------------------------------}
+p:=1;
+repeat
+
+    lineardim(x+b+a*(p-1),y-10,x+b+a+a*(p-1),y-10,-300,0,769,259,1);
+
+moveto(x+b+a*(p-1)+56/2,Y+D1-35);
+        line(a-56,0);
+
+p:=p+1;
+
+until (p=n+1) ;
+
+{下部ヨコ寸法線}
+
+lineardim(x,y-10,x+b,y-10,-300,0,769,259,1);
+
+lineardim(x+L-b,y-10,x+L,y-10,-300,0,769,259,1);
+
+lineardim(x,y-10,x+L,y-10,-450,0,769,259,1);
+
+{ヨコ溝ライン(端)}
+moveto(x,Y+D1-35);
+        line(b-56/2,0);
+
+moveto(x+L-b+56/2,Y+D1-35);
+        line(b-56/2,0);
+
+{奥行き寸法}
+
+lineardim(x-10,y+D1,x-10,y+D1-D2,-250,1,769,259,1);
+
+lineardim(x-10,y+D1-D2,x-10,y,-250,1,769,259,1);
+
+lineardim(x-10,y+D1,x-10,y,-400,1,769,259,1);
+
+{引出し線--------------------------}
+penpat(2);
+BeginGroup;
+openpoly;
+poly(x+b,Y+D1-D2,x+b+a/2,Y+D1+360,x+b+a/2+500,Y+D1+360);
+       textsize(14);
+       textorigin(x+b+a/2+10,Y+D1+360);
+begintext;
+'Φ56貫通穴'
+endtext;
+EndGroup;
+
+BeginGroup;
+openpoly;
+poly(x+L-b/2,Y+D1-10, x+L-b/2+180,Y+D1+270, x+L-b/2+180+800,Y+D1+270);
+       textsize(14);
+       textorigin(x+L-b/2+180+10,Y+D1+270);
+begintext;
+'ﾐｿﾞ加工(W=35,D=8)'
+endtext;
+EndGroup;
+
+BeginGroup;
+openpoly;
+poly(x+L-b+10,y+D1/2,x+L-30,y-120,x+L+860,y-120);
+	textsize(14);
+	textjust(3);
+	textorigin(x+L+860,y-120);
+
+begintext;
+'ﾐｿﾞ加工(W=56,D=8)'
+endtext;
+EndGroup;
+
+
+{断面方向記号-----------------------}
+openpoly;
+poly(x-85,Y+D1-D2,x-85,Y+D1-D2+135,x-85-20,Y+D1-D2+135-40);
+       textsize(16);
+ 	textjust(4);
+	textface([bold]);
+      textorigin(x-210,Y+D1-D2+45);
+begintext;
+'A'
+endtext;
+
+openpoly;
+poly(x+L+85,Y+D1-D2,x+L+85,Y+D1-D2+135,x+L+85+20,Y+D1-D2+135-40);
+       textsize(16);
+	textjust(4);
+	textface([bold]);
+       textorigin(x+L+140,Y+D1-D2+45);
+begintext;
+'A´'
+endtext;
+
+penpat(-6);
+moveto(x-75,Y+D1-D2);
+        line(200,0);
+moveto(x+L+75,Y+D1-D2);
+        line(-200,0);
+penpat(2);
+
+openpoly;
+poly(x+b+a,y+D1+75,x+b+a+135,y+D1+75,x+b+a+135-40,y+D1+75+20);
+       textsize(16);
+	textjust(4);
+	textface([bold]);
+       textorigin(x+b+a+135+20,y+D1+75-30);
+begintext;
+'B'
+endtext;
+
+openpoly;
+poly(x+b+a,y-540,x+b+a+135,y-540,x+b+a+135-40,y-540-20);
+       textsize(16);
+	textjust(4);
+	textface([bold]);
+       textorigin(x+b+a+135+20,y-540-80);
+begintext;
+'B´'
+endtext;
+
+penpat(-6);
+moveto(x+b+a,y-540);
+        line(0,D1+150+465);
+penpat(2);
+
+       textrotate(#0);
+
+
+
+{正面図------------}
+{rect(x,y-700,x+L,y-700+19);
+closepoly;
+poly(x+L/2,y-700,x+L/2-25,y-700-60,x+L/2+25,y-700-60);
+       textsize(14);
+       textorigin(x+L-L/4,Y-700+30);
+begintext;
+'上面'
+endtext;
+       textorigin(x+L-L/4,Y-700-100);
+begintext;
+'下面'
+endtext;}
+
+   EndGroup;
+
+{IF LK then
+BEGIN
+closepoly;
+poly(-1633,-988,-1633-60,-988+25,-1633-60,-988-25);
+END;
+IF RK then
+BEGIN
+closepoly;
+poly(1598,-988,1598+60,-988+25,1598+60,-988-25);
+END;
+}
+
+
+{発注長さ・本数表記--------------------------}
+BEGIN
+BeginGroup;
+
+T:=CONCAT('[ ','L',L,'×D',D1,'×t19 ] ×１枚');
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(16);
+       textorigin(-60,1550);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+
+T:=CONCAT('(LED埋込ﾀﾞｳﾝﾗｲﾄ×',n+1,'灯用穴加工･配線ﾐｿﾞ加工付)');
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(12);
+       textorigin(-80,1430);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+
+EndGroup;
+
+T:=concat(D2);
+textsize(14);
+textorigin(-510,-1625);
+fillpat(1);
+
+begintext;
+T
+endtext;
+
+T:=concat(D1-D2);
+fillpat(1);
+
+textorigin(950,-1625);
+begintext;
+T
+endtext;
+
+END;
+
+  
+ ClrMessage;
+redrawall;
+
+pensize(8);
+fillpat(0);
+penpat(2);
+
+settool(-128);
+end;
+TextVerticalAlign(1);
+popattrs;
+END;
+
+run(TSPA2_DL);

@@ -1,0 +1,585 @@
+procedure FTL_I;
+LABEL 222,10,99,77,88;
+
+CONST
+	cMarginX=190+130+350;
+	cMarginY=350+80+220;
+VAR
+
+      h:handle;
+
+	done,abort,rtype,ltype:boolean;
+
+	SD,TIRI,AS,SF,GC,GF,GW,GD,x,y,L1,L2,D1,D2,SL,SR,AP1,AP2,AP3,AP4,AP5,AP6,AP7:REAL;
+
+
+	STR2,b,c,d,e,f,g,I,J,K,L,M,N,O,P,Q,R,S,T,C2,T1,T2,KO,KC,KB,DS,GN,GR,GG,GG2,str:STRING;
+
+     zzz,item:integer;
+
+
+
+function makedialog:boolean;
+
+var
+	dummy,sh,sv:INTEGER;
+     item:integer;
+BEGIN
+pushattrs;
+pushattrs;
+{↑２つ入れてエラーを是正}
+	GetScreen(dummy,dummy,sh,sv);
+	sh:=sh div 2;
+	sv:=sv div 2;
+BeginDialog(1,1,sh-cMarginX div 2,sv-cMarginY div 2,sh+cMarginX div 2,sv+cMarginY div 2);
+			AddButton('OK',1,1,20+240,240+120+240,90+240,260+120+240);
+			AddButton('Cancel',32,1,130+240,240+120+240,200+240,260+120+240);
+   
+
+	
+ AddField('　　　　　　　　　　　　　　　　　　∮　HFL天板　[I型 シンクなし]　∮',     10,1,8,205+23*(-8.5),520,220+23*(-8.5));
+
+AddField('□ 天板のL1寸法を入力してください。(壁側のｸﾘｱﾗﾝｽ3ﾐﾘﾏｲﾅｽした寸法) ・・・・・・・・・・・・・・・・・・・・・・・・・',     103,1,8,205+23*(-5),520,220+23*(-5));           
+ AddField('□ 天板のD寸法を入力してください。(壁側のｸﾘｱﾗﾝｽ3ﾐﾘﾏｲﾅｽした寸法) ・・・・・・・・・・・・・・・・・・・・・',     104,1,8,205+23*(-4),520,220+23*(-4));
+ 
+AddField('□ アッパー出し寸法-1 (左側) を入力してください。(1～38ﾐﾘです)・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     109,1,8,205+23*(-2),520,220+23*(-2));
+AddField('□ アッパー出し寸法-2 (右側) を入力してください。(1～38ﾐﾘです)・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     111,1,8,205+23*(-1),520,220+23*(-1));
+ AddField('□ アッパー出し寸法-3 (バック側) を入力してください。(1～38ﾐﾘです)・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     112,1,8,205+23*0,520,220+23*0);
+ AddField('□ アッパー出し寸法-4 (フロント側) を入力してください。(1～38ﾐﾘです) ・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     113,1,8,205+23*1,520,220+23*1);
+AddField('● 天板ｶﾗｰを入力してください。・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     120,1,8,205+23*4,520,220+23*4);
+AddField('● ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ ｶﾗｰを入力してください。 ・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     122,1,8,205+23*5,520,220+23*5);
+ AddField('● 架台表面 ｶﾗｰを入力してください。 ・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     123,1,8,205+23*6,520,220+23*6);
+ AddField('● 架台ﾎﾞｰﾀﾞｰ ｶﾗｰを入力してください。 ・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・・',     124,1,8,205+23*7,520,220+23*7);
+
+
+AddField('2497',203,2,530,205+23*(-5),650,220+23*(-5)); {L2 天板W寸法}
+AddField('638',204,2,530,205+23*(-4),650,220+23*(-4)); {D2 天板D寸法}
+AddField('1',209,2,530,205+23*(-2),650,220+23*(-2)); {AP1 ｱｯﾊﾟｰ出し寸法1}
+AddField('1',211,2,530,205+23*(-1),650,220+23*(-1)); {AP2 ｱｯﾊﾟｰ出し寸法2}
+AddField('1',212,2,530,205+23*0,650,220+23*0); {AP3 ｱｯﾊﾟｰ出し寸法3}
+AddField('38',213,2,530,205+23*1,650,220+23*1); {AP4 ｱｯﾊﾟｰ出し寸法4}
+Addchoiceitem('',220,1,530,205+23*4,650,220+23*4); {C ﾄｯﾌﾟｶﾗｰ}
+Addchoiceitem('',222,1,530,205+23*5,650,220+23*5); {KO ｱｯﾊﾟｰ木口ｶﾗｰ}
+Addchoiceitem('',223,1,530,205+23*6,650,220+23*6); {KC 架台表面ｶﾗｰ}
+Addchoiceitem('',224,1,530,205+23*7,650,220+23*7); {KB 架台ﾎﾞｰﾀﾞｰｶﾗｰ}
+
+	EndDialog;
+
+
+  getdiaLOG(1);
+
+
+{プルダウンメニュー}
+
+{天板カラー}
+insertchoice(220,3,'FJ/ｼﾞｪｯﾄﾌﾞﾗｯｸ(JB)');
+
+
+{アッパーボーダーカラー}
+InsertChoice(222,3,'t1.2 FJ/ｼﾞｪｯﾄﾌﾞﾗｯｸ');
+InsertChoice(222,4,'t1.0 UA/ﾄｰﾌﾟ');
+InsertChoice(222,5,'t1.0 UA/ﾗｰﾊﾞｸﾞﾚｰ');
+InsertChoice(222,6,'t1.0 UA/ﾛｰｽﾞｸﾞﾚｰ');
+InsertChoice(222,7,'t1.0 UA/ﾌﾞﾙｰｸﾞﾚｰ');
+InsertChoice(222,8,'t1.0 UA/ﾌﾟﾚﾐｱﾑﾎﾜｲﾄ');
+InsertChoice(222,9,'t1.0 UA/ｱｯｼｭﾍﾞｰｼﾞｭ');
+InsertChoice(222,10,'t1.0 UA/ﾌｫｯｸﾞｸﾞﾚｰ');
+InsertChoice(222,11,'t1.0 UA/ｵﾆｷｽｸﾞﾚｰ');
+InsertChoice(222,12,'t1.0 UA/ｳｫｰﾑｸﾞﾚｰ');
+InsertChoice(222,13,'t1.0 EL/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(222,14,'t1.0 EL/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(222,15,'t1.0 EL/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(222,16,'t1.0 EM/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(222,17,'t1.0 EM/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(222,18,'t1.0 EM/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(222,19,'t1.0 KL/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(222,20,'t1.0 KL/ﾀﾞｰｸｵｰｸ');
+InsertChoice(222,21,'t1.0 KL/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(222,22,'t1.0 KL/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(222,23,'t1.0 KL/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(222,24,'t1.0 KL/ｵｰｸｼｮｺﾗ');
+InsertChoice(222,25,'t1.0 KL/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(222,26,'t1.0 KM/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(222,27,'t1.0 KM/ﾀﾞｰｸｵｰｸ');
+InsertChoice(222,28,'t1.0 KM/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(222,29,'t1.0 KM/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(222,30,'t1.0 KM/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(222,31,'t1.0 KM/ｵｰｸｼｮｺﾗ');
+InsertChoice(222,32,'t1.0 KM/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(222,33,'t1.0 GD/ﾙｰﾅ');
+InsertChoice(222,34,'t1.0 GD/ﾌｫﾙﾃﾍﾞﾄﾝ');
+InsertChoice(222,35,'t1.0 GD/ﾍﾞﾄﾝｸﾞﾚｰ');
+InsertChoice(222,36,'t1.0 GD/ﾒﾙｸﾘｵ');
+InsertChoice(222,37,'t1.0 GD/ﾋﾟｱﾉﾍﾞﾄﾝ');
+InsertChoice(222,38,'t1.0 AR/ﾋﾞｱﾝｺﾏｰﾌﾞﾙ');
+InsertChoice(222,39,'t1.0 ﾋﾟｱﾉﾒﾙｸﾘｵ');
+
+{架台表面カラー}
+
+insertchoice(223,53,'UA/ｵﾆｷｽｸﾞﾚｰ');
+
+
+
+{架台ボーダーカラー}
+InsertChoice(224,1,'t1.0 G:ｸﾞﾚｰ');
+InsertChoice(224,2,'t1.0 KR:ｸﾛ');
+InsertChoice(224,3,'t1.0 UA/ﾄｰﾌﾟ');
+InsertChoice(224,4,'t1.0 UA/ﾗｰﾊﾞｸﾞﾚｰ');
+InsertChoice(224,5,'t1.0 UA/ﾛｰｽﾞｸﾞﾚｰ');
+InsertChoice(224,6,'t1.0 UA/ﾌﾞﾙｰｸﾞﾚｰ');
+InsertChoice(224,7,'t1.0 UA/ﾌﾟﾚﾐｱﾑﾎﾜｲﾄ');
+InsertChoice(224,8,'t1.0 UA/ｱｯｼｭﾍﾞｰｼﾞｭ');
+InsertChoice(224,9,'t1.0 UA/ﾌｫｯｸﾞｸﾞﾚｰ');
+InsertChoice(224,10,'t1.0 UA/ｵﾆｷｽｸﾞﾚｰ');
+InsertChoice(224,11,'t1.0 UA/ｳｫｰﾑｸﾞﾚｰ');
+InsertChoice(224,12,'t0.5 UA/ｻｸﾗ');
+InsertChoice(224,13,'t0.5 UA/ﾋﾟｽﾀﾁｵ');
+InsertChoice(224,14,'t0.5 UA/ﾗｲﾗｯｸ');
+InsertChoice(224,15,'t1.0 EL/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(224,16,'t1.0 EL/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(224,17,'t1.0 EL/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(224,18,'t1.0 EM/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(224,19,'t1.0 EM/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(224,20,'t1.0 EM/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(224,21,'t1.0 KL/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(224,22,'t1.0 KL/ﾀﾞｰｸｵｰｸ');
+InsertChoice(224,23,'t1.0 KL/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(224,24,'t1.0 KL/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(224,25,'t1.0 KL/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(224,26,'t1.0 KL/ｵｰｸｼｮｺﾗ');
+InsertChoice(224,27,'t1.0 KL/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(224,28,'t1.0 KM/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(224,29,'t1.0 KM/ﾀﾞｰｸｵｰｸ');
+InsertChoice(224,30,'t1.0 KM/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(224,31,'t1.0 KM/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(224,32,'t1.0 KM/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(224,33,'t1.0 KM/ｵｰｸｼｮｺﾗ');
+InsertChoice(224,34,'t1.0 KM/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(224,35,'t1.0 GD/ﾙｰﾅ');
+InsertChoice(224,36,'t1.0 GD/ﾌｫﾙﾃﾍﾞﾄﾝ');
+InsertChoice(224,37,'t1.0 GD/ﾍﾞﾄﾝｸﾞﾚｰ');
+InsertChoice(224,38,'t1.0 GD/ﾒﾙｸﾘｵ');
+InsertChoice(224,39,'t1.0 GD/ﾋﾟｱﾉﾍﾞﾄﾝ');
+InsertChoice(224,40,'t1.0 AR/ﾋﾞｱﾝｺﾏｰﾌﾞﾙ');
+InsertChoice(224,41,'t1.0 ﾋﾟｱﾉﾒﾙｸﾘｵ');
+
+  DONE:=FALSE;
+  ABORT:=FALSE;
+  RTYPE:=TRUE; 
+ LTYPE:=FALSE;
+ 
+
+
+REPEAT
+    DIALOGEVENT(ITEM);
+      IF ITEM=1 THEN 
+            DONE:=TRUE;
+      IF ITEM=32 THEN  BEGIN
+            DONE:=TRUE;
+            ABORT:=TRUE;
+       END;
+      
+UNTIL DONE;
+
+   STR:=GETFIELD(203);
+    L2:=STR2NUM(STR);
+    
+   STR:=GETFIELD(204);
+    D2:=STR2NUM(STR);
+    
+STR:=GETFIELD(209);
+    AP1:=STR2NUM(STR);
+   STR:=GETFIELD(211);
+    AP2:=STR2NUM(STR);
+    
+   STR:=GETFIELD(212);
+    AP3:=STR2NUM(STR);
+    
+   STR:=GETFIELD(213);
+    AP4:=STR2NUM(STR);
+
+GetSelChoice(220,0,zzz,str);
+C:=STR;
+
+
+GetSelChoice(222,0,zzz,str);
+KO:=STR;
+
+GetSelChoice(223,0,zzz,str);
+KC:=STR;
+
+GetSelChoice(224,0,zzz,str);
+KB:=STR;
+
+CLRDIALOG;
+
+
+ if item=1 then 
+     makedialog:=true
+   else 
+      makedialog:=false;
+  
+END;
+
+
+{ MAIN PROGRAM }
+  
+BEGIN
+ClrMessage;
+
+TextVerticalAlign(1);
+   
+if makedialog=true then
+     BEGIN
+{デフォルトのテキストサイズ→寸法線の数字}
+textsize(13);
+
+Message('ｸﾘｯｸしてください｡');
+          getpt(x,y);
+
+ fillpat(0);
+        penpat(2);
+        pensize(8);
+  
+
+  {ﾖｺ寸法}
+lineardim(X,Y+D2+50,X+L2,Y+D2+50,500,0,769,259,1);
+
+
+{AP1寸法}
+lineardim(X,Y+D2+50,X+AP1,Y+D2+50,400,0,769,259,1);
+
+{AP2寸法}
+lineardim(X+L2,Y+D2+50,X+L2-AP2,Y+D2+50,400,0,769,259,1);
+
+{AP3寸法}
+lineardim(X+L2+50,Y+D2,X+L2+50,Y+D2-AP3,300,1,769,259,1);
+
+{AP4寸法}
+lineardim(X+L2+50,Y,X+L2+50,Y+AP4,300,1,769,259,1);
+
+
+begin
+   SelectObj((T=Dimension));
+h:=FSACTLAYER;
+
+{寸法値を消したくないもの}
+
+
+lineardim(X+L2+50,Y,X+L2+50,Y+D2,400,1,769,259,1);
+
+{架台3寸法}
+lineardim(X+AP1,Y+D2+50,X+L2-AP2,Y+D2+50,400,0,769,259,1);
+{架台4寸法}
+lineardim(X+L2+50,Y+AP4,X+L2+50,Y+D2-AP3,300,1,769,259,1);
+
+end;
+   SelectObj((T=Dimension));
+
+
+        fillpat(1);
+        penpat(2);
+        pensize(12);
+
+
+closepoly;
+poly(x,y,x,y+D2,x+l2,y+D2,x+l2,y);
+
+
+
+{ﾊﾞｯｸﾗｲﾝ}
+    pensize(8);
+penpat(-1);   
+ MOVETO(X+AP1,Y+D2-AP3);
+    LINE(L2-AP1-AP2,0);
+
+{ﾌﾛﾝﾄﾗｲﾝ}
+     pensize(8);
+     penpat(-1);
+      MOVETO(X+AP1,Y+AP4);
+           LINE(L2-AP1-AP2,0);
+
+{LRﾗｲﾝ}
+        pensize(8);
+           penpat(-1);
+        MOVETO(X+AP1,Y+D2-AP3);
+           LINE(0,-D2+AP3+AP4);
+        MOVETO(X+L2-AP2,Y+D2-AP3);
+           LINE(0, -D2+AP3+AP4);
+
+
+{木口ｶﾗｰ--------}
+
+penpat(2);
+
+{ﾌﾛﾝﾄ木口}
+
+FillPat(1);
+closepoly;
+poly(x+L2/1.5,y,x+L2/1.5-30,y-60,x+L2/1.5+30,y-60);
+
+
+T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ：
+',KO);
+
+    textrotate(#0);
+       textjust(3);
+       textface([]);
+       textsize(11);
+       textorigin(x+L2/1.5,y-100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+
+FillPat(2);
+closepoly;
+poly(x+L2/3,y+AP4,x+L2/3-30,y+AP4-60,x+L2/3+30,y+AP4-60);
+T:=CONCAT('架台ﾎﾞｰﾀﾞｰ：
+',KB);
+
+    textrotate(#0);
+       textjust(3);
+       textface([]);
+       textsize(11);
+       textorigin(x+L2/3,y-100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+
+{ﾊﾞｯｸ木口}
+FillPat(1);
+closepoly;
+poly(x+L2/3,y+D2,x+L2/3-30,y+D2+60,x+L2/3+30,y+D2+60);
+
+{
+T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ：
+',KO);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+L2/3,y+D2+250);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+FillPat(0);
+}
+
+FillPat(2);
+closepoly;
+poly(x+L2/1.5,y+D2-AP3,x+L2/1.5-30,y+D2-AP3+60,x+L2/1.5+30,y+D2-AP3+60);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ：
+',KB);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+      textorigin(x+L2/1.5,y+D2+250);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+
+{右側木口}
+FillPat(1);
+closepoly;
+poly(x+L2,y+D2/1.5,x+L2+60,y+D2/1.5-30,x+L2+60,y+D2/1.5+30);
+
+{T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ：
+',KO);
+;
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+L2+100,y+D2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+
+FillPat(2);
+closepoly;
+poly(x+L2-AP2,y+D2/3,x+L2-AP2+60,y+D2/3-30,x+L2-AP2+60,y+D2/3+30);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ：
+',KB);
+
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+L2+100,y);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+{左側木口}
+FillPat(1);
+closepoly;
+poly(x,y+D2/3,x-60,y+D2/3-30,x-60,y+D2/3+30);
+
+{
+T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ：
+',KO);
+;
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x-250,y);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+
+FillPat(2);
+closepoly;
+poly(x+AP1,y+D2/1.5,x+AP1-60,y+D2/1.5-30,x+AP1-60,y+D2/1.5+30);
+{
+T:=CONCAT('架台ﾎﾞｰﾀﾞｰ：
+',KB);
+
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x-250,y+D2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+}
+FillPat(0);
+
+
+
+
+
+{ﾖｺ寸法}
+
+
+T:=CONCAT('L1=');
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(13);
+       textorigin(x+L2/2-200,y+D2+650);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+
+{ﾜｰｸﾄｯﾌﾟ 　ﾄｯﾌﾟｶﾗｰ}
+{
+T:=CONCAT('ｱｯﾊﾟｰﾄｯﾌﾟ：',C);
+ textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       textorigin(x+L2/4+D1,y+D2-30);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+}
+
+T:=CONCAT('※架台表裏面：
+',KC);
+ textrotate(#0);
+       textjust(3);
+       textface([]);
+       textsize(12);
+       textorigin(x+L2/2+D1,y+L1/2-D2/2-200);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+T:=CONCAT('ﾌﾛﾝﾄ');
+ textrotate(#0);
+       textjust(2);
+       textface([BOLD]);
+       textsize(15);
+       textorigin(x+L2/2+D1/2,y+L1/2-D2/2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+ClrMessage;
+   textsize(10);
+popattrs;
+Group;
+
+{上部ﾃｷｽﾄ}
+
+
+T:=CONCAT('フェニックス');
+ textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(14);
+       textorigin(620,2260);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+IF (D1=150) or ((D1>150) and (D1<451))  then T1:='045';
+IF (D1=451) or ((D1>451) and (D1<651))  then T1:='065';
+IF (D1=651) or ((D1>651) and (D1<911))  then T1:='091';
+IF (D1=911) or ((D1>911) and (D1<1034))  then T1:='103';
+
+IF (D2=150) or ((D2>150) and (D2<451))  then T2:='045';
+IF (D2=451) or ((D2>451) and (D2<651))  then T2:='065';
+IF (D2=651) or ((D2>651) and (D2<911))  then T2:='091';
+IF (D2=911) or ((D2>911) and (D2<1034))  then T2:='103';
+
+
+{追加------------------------------------------}
+BEGIN
+
+BeginGroup;
+
+T:=CONCAT('HFL',T2,'-',C,', L1=',NUM2STRF(L2));
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(15);
+       textorigin(140,2140-150-300+100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+EndGroup;
+END;
+{追加------------------------------------------}
+
+END;
+popattrs;
+ 99:END;
+
+run(FTL_I);

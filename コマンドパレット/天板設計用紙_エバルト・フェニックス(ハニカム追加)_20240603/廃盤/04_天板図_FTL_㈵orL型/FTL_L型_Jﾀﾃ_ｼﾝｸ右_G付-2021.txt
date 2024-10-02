@@ -1,0 +1,1175 @@
+procedure FTL_L_JT_SR;
+LABEL 222,10,99,77,88;
+
+CONST
+	cMarginX=190+130+350;
+	cMarginY=350+80+220;
+VAR
+      h:handle;
+	done,abort,rtype,ltype:boolean;
+
+	SD,TIRI,AS,SF,GC,GF,GW,GD,x,y,L1,L2,D1,D2,SL,SR,AP1,AP2,AP3,AP4,AP5,AP6,AP7:REAL;
+	STR2,b,c,d,e,f,g,I,J,K,L,M,N,O,P,Q,R,S,T,C2,T1,T2,KO,KC,KB,DS,GN,GR,GG,GG2,str:STRING;
+
+     zzz,item:integer;
+function makedialog:boolean;
+var	
+	dummy,sh,sv:INTEGER;
+     item:integer;
+BEGIN
+pushattrs;
+pushattrs;
+{↑2つ入れてｴﾗｰを是正}
+	GetScreen(dummy,dummy,sh,sv);
+	sh:=sh div 2;
+	sv:=sv div 2;
+BeginDialog(1,1,sh-cMarginX div 2,sv-cMarginY div 2,sh+cMarginX div 2,sv+cMarginY div 2);
+			AddButton('OK',1,1,20+240,240+120+240,90+240,260+120+240);
+			AddButton('Cancel',32,1,130+240,240+120+240,200+240,260+120+240);
+   
+
+ AddField('                  ∮ FTL天板 [L型 Jﾀﾃ ｼﾝｸ右] ∮',     10,1,8,205+23*(-8.5),520,220+23*(-8.5));
+
+ AddField('■ 天板-1(ﾀﾃ)のｺｰﾅｰから端までの総寸法を入力してください｡(壁側のｸﾘｱﾗﾝｽ3ﾐﾘﾏｲﾅｽした寸法) ･････････････',     101,1,8,205+23*(-7),520,220+23*(-7)); 
+ AddField('■ 天板-1(ﾀﾃ)のD寸法を入力してください｡(壁側のｸﾘｱﾗﾝｽ3ﾐﾘﾏｲﾅｽした寸法) ･･････････････････････････････',     102,1,8,205+23*(-6),520,220+23*(-6)); 
+ AddField('□ 天板-2(ﾖｺ)のｺｰﾅｰから端までの総寸法を入力してください｡(壁側のｸﾘｱﾗﾝｽ3ﾐﾘﾏｲﾅｽした寸法) ･････････････',     103,1,8,205+23*(-5),520,220+23*(-5));           
+ AddField('□ 天板-2(ﾖｺ)のD寸法を入力してください｡(壁側のｸﾘｱﾗﾝｽ3ﾐﾘﾏｲﾅｽした寸法) ･･････････････････････････････',     104,1,8,205+23*(-4),520,220+23*(-4));
+ AddField('□ 天板ｺｰﾅｰからｼﾝｸ芯までの寸法を入力してください｡(ｺｰﾅｰ壁面からｼﾝｸ芯寸法ﾏｲﾅｽ3ﾐﾘ) ････････････',     105,1,8,205+23*(-3),520,220+23*(-3));
+ AddField('■ 天板ｺｰﾅｰからｸｯｸﾄｯﾌﾟ芯までの寸法を入力してください｡(壁側のｸﾘｱﾗﾝｽ3ﾐﾘﾏｲﾅｽした寸法) ･･･････････',     106,1,8,205+23*(-2),520,220+23*(-2));
+AddField('■ ｱｯﾊﾟｰ出し寸法-1 (天板-1(ﾀﾃ)の左側ｴﾝﾄﾞ) を入力してください｡(1～38ﾐﾘです)･･･････････････････････････',     107,1,8,205+23*(-1),520,220+23*(-1));
+ AddField('■ ｱｯﾊﾟｰ出し寸法-2 (天板-1(ﾀﾃ)の右側) を入力してください｡(1～38ﾐﾘです)･･･････････････････････････',     108,1,8,205+23*0,520,220+23*0);
+ AddField('■ ｱｯﾊﾟｰ出し寸法-3 (天板-1(ﾀﾃ)のﾊﾞｯｸ側) を入力してください｡(1～38ﾐﾘです)･････････････････････････',     109,1,8,205+23*1,520,220+23*1);
+ AddField('■ ｱｯﾊﾟｰ出し寸法-4 (天板-1(ﾀﾃ)のﾌﾛﾝﾄ側) を入力してください｡(1～38ﾐﾘです) ･･･････････････････････',     110,1,8,205+23*2,520,220+23*2);
+ AddField('□ ｱｯﾊﾟｰ出し寸法-5 (天板-2(ﾖｺ)の右側ｴﾝﾄﾞ) を入力してください｡(1～38ﾐﾘです)･･･････････････････････････',     111,1,8,205+23*3,520,220+23*3);
+ AddField('□ ｱｯﾊﾟｰ出し寸法-6 (天板-2(ﾖｺ)のﾊﾞｯｸ側) を入力してください｡(1～38ﾐﾘです)･････････････････････････',     112,1,8,205+23*4,520,220+23*4);
+ AddField('□ ｱｯﾊﾟｰ出し寸法-7 (天板-2(ﾖｺ)のﾌﾛﾝﾄ側) を入力してください｡(1～38ﾐﾘです) ･･･････････････････････',     113,1,8,205+23*5,520,220+23*5);
+ AddField('□ ｼﾝｸ品番を入力してください｡･･････････････････････････････････････････････････････････',     114,1,8,205+23*6,520,220+23*6);
+AddField('天板ﾌﾛﾝﾄと扉面のﾁﾘ寸法を入力してください｡(ｼﾝｸA寸法はｼﾝｸ選択時に自動計算します｡)･･',     1142,1,8,205+23*7,520,220+23*7);
+ AddField('■ ｸｯｸﾄｯﾌﾟ品番を入力してください｡････････････････････････････････････････････････････････',     115,1,8,205+23*8,520,220+23*8);
+ AddField('■ ｸｯｸﾄｯﾌﾟ開口巾寸法を入力してください｡･････････････････････････････････････････････････',     116,1,8,205+23*9,520,220+23*9);
+ AddField('■ ｸｯｸﾄｯﾌﾟ開口奥行き寸法を入力してください｡･･････････････････････････････････････････････',     117,1,8,205+23*10,520,220+23*10);
+ AddField('■ ｸｯｸﾄｯﾌﾟ開口ｺｰﾅｰRを入力してください(最小Rは9φです) ････････････････････････････････',     118,1,8,205+23*11,520,220+23*11);
+ AddField('■ 天板ﾌﾛﾝﾄからからｸｯｸﾄｯﾌﾟ開口手前の寸法を入力してください｡･･･････････････････････････････',     119,1,8,205+23*12,520,220+23*12);
+ AddField('● 天板ｶﾗｰを入力してください｡･･･････････････････････････････････････････････････････････',     120,1,8,205+23*13,520,220+23*13);
+AddField('● ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ ｶﾗｰを入力してください｡ ･･･････････････････････････････････････････････････',     122,1,8,205+23*14,520,220+23*14);
+ AddField('● 架台表面 ｶﾗｰを入力してください｡ ･･････････････････････････････････････････････････････',     123,1,8,205+23*15,520,220+23*15);
+ AddField('● 架台ﾎﾞｰﾀﾞｰ ｶﾗｰを入力してください｡ ････････････････････････････････････････････････････',     124,1,8,205+23*16,520,220+23*16);
+
+		
+AddField('1797',201,2,530,205+23*(-7),650,220+23*(-7)); {L1 天板1(ﾀﾃ)W寸法}
+AddField('638',202,2,530,205+23*(-6),650,220+23*(-6)); {D1 天板1(ﾀﾃ)D寸法}
+AddField('2497',203,2,530,205+23*(-5),650,220+23*(-5)); {L2 天板2(ﾖｺ)W寸法}
+AddField('638',204,2,530,205+23*(-4),650,220+23*(-4)); {D2 天板2(ﾖｺ)D寸法}
+AddField('1497',205,2,530,205+23*(-3),650,220+23*(-3)); {SL ｼﾝｸｾﾝﾀｰ位置}
+AddField('1197',206,2,530,205+23*(-2),650,220+23*(-2)); {GC ｸｯｶｰｾﾝﾀｰ位置}
+AddField('38',207,2,530,205+23*(-1),650,220+23*(-1)); {AP1 ｱｯﾊﾟｰ出し寸法1}
+AddField('1',208,2,530,205+23*0,650,220+23*0); {AP2 ｱｯﾊﾟｰ出し寸法2}
+AddField('1',209,2,530,205+23*1,650,220+23*1); {AP3 ｱｯﾊﾟｰ出し寸法3}
+AddField('38',210,2,530,205+23*2,650,220+23*2); {AP4 ｱｯﾊﾟｰ出し寸法4}
+AddField('38',211,2,530,205+23*3,650,220+23*3); {AP5 ｱｯﾊﾟｰ出し寸法5}
+AddField('1',212,2,530,205+23*4,650,220+23*4); {AP6 ｱｯﾊﾟｰ出し寸法6}
+AddField('38',213,2,530,205+23*5,650,220+23*5); {AP7 ｱｯﾊﾟｰ出し寸法7}
+Addchoiceitem('',214,1,530,205+23*6,650,220+23*6); {ｼﾝｸ品番}
+AddField('5',901,2,530,205+23*7,650,220+23*7);{天板-扉ﾁﾘ寸法}
+AddField('(例)ﾊｰﾏﾝ:DW32K3JTS3SVL',215,2,530,205+23*8,650,220+23*8); {GN ｸｯｶｰ品番}
+AddField('560',216,2,530,205+23*9,650,220+23*9); {GW ｸｯｶｰ開口W}
+AddField('462',217,2,530,205+23*10,650,220+23*10); {GD ｸｯｶｰ開口D}
+AddField('20',218,2,530,205+23*11,650,220+23*11); {GR ｸｯｶｰ開口ｺｰﾅｰR}
+AddField('64',219,2,530,205+23*12,650,220+23*12); {GF ｸｯｶｰﾌﾛﾝﾄ距離}
+Addchoiceitem('',220,1,530,205+23*13,650,220+23*13); {C ﾄｯﾌﾟｶﾗｰ}
+Addchoiceitem('',222,1,530,205+23*14,650,220+23*14); {KO ｱｯﾊﾟｰ木口ｶﾗｰ}
+Addchoiceitem('',223,1,530,205+23*15,650,220+23*15); {KC 架台表面ｶﾗｰ}
+Addchoiceitem('',224,1,530,205+23*16,650,220+23*16); {KB 架台ﾎﾞｰﾀﾞｰｶﾗｰ}
+
+	EndDialog;
+
+
+  getdiaLOG(1);
+
+
+{ﾌﾟﾙﾀﾞｳﾝﾒﾆｭｰ-------------------}
+{ｼﾝｸ品番}
+insertchoice(214,1,'JST800B');
+insertchoice(214,2,'KHB800HL-10');
+insertchoice(214,3,'KHB700HL-10');
+insertchoice(214,4,'KHB600HL-10');
+insertchoice(214,5,'JBA800PR');
+insertchoice(214,6,'JBA800PL');
+insertchoice(214,7,'BSS310R');
+insertchoice(214,8,'BSS310L');
+insertchoice(214,9,'BSS310T');
+insertchoice(214,10,'ACT800BK');
+
+
+{天板ｶﾗｰ}
+insertchoice(220,3,'FJ/ｼﾞｪｯﾄﾌﾞﾗｯｸ(JB)');
+
+
+{ｱｯﾊﾟｰﾎﾞｰﾀﾞｰｶﾗｰ}
+InsertChoice(222,3,'t1.2 FJ/ｼﾞｪｯﾄﾌﾞﾗｯｸ');
+InsertChoice(222,4,'t1.0 UA/ﾄｰﾌﾟ');
+InsertChoice(222,5,'t1.0 UA/ﾗｰﾊﾞｸﾞﾚｰ');
+InsertChoice(222,6,'t1.0 UA/ﾛｰｽﾞｸﾞﾚｰ');
+InsertChoice(222,7,'t1.0 UA/ﾌﾞﾙｰｸﾞﾚｰ');
+InsertChoice(222,8,'t1.0 UA/ﾌﾟﾚﾐｱﾑﾎﾜｲﾄ');
+InsertChoice(222,9,'t1.0 UA/ｱｯｼｭﾍﾞｰｼﾞｭ');
+InsertChoice(222,10,'t1.0 UA/ﾌｫｯｸﾞｸﾞﾚｰ');
+InsertChoice(222,11,'t1.0 UA/ｵﾆｷｽｸﾞﾚｰ');
+InsertChoice(222,12,'t1.0 UA/ｳｫｰﾑｸﾞﾚｰ');
+InsertChoice(222,13,'t1.0 EL/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(222,14,'t1.0 EL/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(222,15,'t1.0 EL/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(222,16,'t1.0 EM/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(222,17,'t1.0 EM/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(222,18,'t1.0 EM/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(222,19,'t1.0 KL/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(222,20,'t1.0 KL/ﾀﾞｰｸｵｰｸ');
+InsertChoice(222,21,'t1.0 KL/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(222,22,'t1.0 KL/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(222,23,'t1.0 KL/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(222,24,'t1.0 KL/ｵｰｸｼｮｺﾗ');
+InsertChoice(222,25,'t1.0 KL/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(222,26,'t1.0 KM/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(222,27,'t1.0 KM/ﾀﾞｰｸｵｰｸ');
+InsertChoice(222,28,'t1.0 KM/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(222,29,'t1.0 KM/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(222,30,'t1.0 KM/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(222,31,'t1.0 KM/ｵｰｸｼｮｺﾗ');
+InsertChoice(222,32,'t1.0 KM/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(222,33,'t1.0 GD/ﾙｰﾅ');
+InsertChoice(222,34,'t1.0 GD/ﾌｫﾙﾃﾍﾞﾄﾝ');
+InsertChoice(222,35,'t1.0 GD/ﾍﾞﾄﾝｸﾞﾚｰ');
+InsertChoice(222,36,'t1.0 GD/ﾒﾙｸﾘｵ');
+InsertChoice(222,37,'t1.0 GD/ﾋﾟｱﾉﾍﾞﾄﾝ');
+InsertChoice(222,38,'t1.0 AR/ﾋﾞｱﾝｺﾏｰﾌﾞﾙ');
+InsertChoice(222,39,'t1.0 ﾋﾟｱﾉﾒﾙｸﾘｵ');;
+
+
+{架台表面カラー}
+
+insertchoice(223,53,'UA/ｵﾆｷｽｸﾞﾚｰ');
+
+
+
+
+{架台ボーダーカラー}
+InsertChoice(224,1,'t1.0 G:ｸﾞﾚｰ');
+InsertChoice(224,2,'t1.0 KR:ｸﾛ');
+InsertChoice(224,3,'t1.0 UA/ﾄｰﾌﾟ');
+InsertChoice(224,4,'t1.0 UA/ﾗｰﾊﾞｸﾞﾚｰ');
+InsertChoice(224,5,'t1.0 UA/ﾛｰｽﾞｸﾞﾚｰ');
+InsertChoice(224,6,'t1.0 UA/ﾌﾞﾙｰｸﾞﾚｰ');
+InsertChoice(224,7,'t1.0 UA/ﾌﾟﾚﾐｱﾑﾎﾜｲﾄ');
+InsertChoice(224,8,'t1.0 UA/ｱｯｼｭﾍﾞｰｼﾞｭ');
+InsertChoice(224,9,'t1.0 UA/ﾌｫｯｸﾞｸﾞﾚｰ');
+InsertChoice(224,10,'t1.0 UA/ｵﾆｷｽｸﾞﾚｰ');
+InsertChoice(224,11,'t1.0 UA/ｳｫｰﾑｸﾞﾚｰ');
+InsertChoice(224,12,'t0.5 UA/ｻｸﾗ');
+InsertChoice(224,13,'t0.5 UA/ﾋﾟｽﾀﾁｵ');
+InsertChoice(224,14,'t0.5 UA/ﾗｲﾗｯｸ');
+InsertChoice(224,15,'t1.0 EL/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(224,16,'t1.0 EL/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(224,17,'t1.0 EL/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(224,18,'t1.0 EM/ﾌﾞﾗｯｸｳｫﾙﾅｯﾄ');
+InsertChoice(224,19,'t1.0 EM/ｱｶｼｱﾍﾞｰｼﾞｭ');
+InsertChoice(224,20,'t1.0 EM/ｵｰｸﾅﾁｭﾗﾙ');
+InsertChoice(224,21,'t1.0 KL/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(224,22,'t1.0 KL/ﾀﾞｰｸｵｰｸ');
+InsertChoice(224,23,'t1.0 KL/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(224,24,'t1.0 KL/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(224,25,'t1.0 KL/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(224,26,'t1.0 KL/ｵｰｸｼｮｺﾗ');
+InsertChoice(224,27,'t1.0 KL/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(224,28,'t1.0 KM/ｻﾝﾄﾞｵｰｸ');
+InsertChoice(224,29,'t1.0 KM/ﾀﾞｰｸｵｰｸ');
+InsertChoice(224,30,'t1.0 KM/ﾉｯﾃｨﾎﾜｲﾄ');
+InsertChoice(224,31,'t1.0 KM/ﾉｯﾃｨﾅﾁｭﾗﾙ');
+InsertChoice(224,32,'t1.0 KM/ﾉｯﾃｨﾌﾞﾗｳﾝ');
+InsertChoice(224,33,'t1.0 KM/ｵｰｸｼｮｺﾗ');
+InsertChoice(224,34,'t1.0 KM/ｱﾝﾃｨｺﾊﾟｲﾝ');
+InsertChoice(224,35,'t1.0 GD/ﾙｰﾅ');
+InsertChoice(224,36,'t1.0 GD/ﾌｫﾙﾃﾍﾞﾄﾝ');
+InsertChoice(224,37,'t1.0 GD/ﾍﾞﾄﾝｸﾞﾚｰ');
+InsertChoice(224,38,'t1.0 GD/ﾒﾙｸﾘｵ');
+InsertChoice(224,39,'t1.0 GD/ﾋﾟｱﾉﾍﾞﾄﾝ');
+InsertChoice(224,40,'t1.0 AR/ﾋﾞｱﾝｺﾏｰﾌﾞﾙ');
+InsertChoice(224,41,'t1.0 ﾋﾟｱﾉﾒﾙｸﾘｵ');
+
+
+  DONE:=FALSE;
+  ABORT:=FALSE;
+  RTYPE:=TRUE; 
+ LTYPE:=FALSE;
+ 
+
+
+REPEAT
+    DIALOGEVENT(ITEM);
+      IF ITEM=1 THEN 
+            DONE:=TRUE;
+      IF ITEM=32 THEN  BEGIN
+            DONE:=TRUE;
+            ABORT:=TRUE;
+       END;
+      
+UNTIL DONE;
+
+
+   STR:=GETFIELD(201);
+    L1:=STR2NUM(STR);
+    
+   STR:=GETFIELD(202);
+    D1:=STR2NUM(STR);
+    
+   STR:=GETFIELD(203);
+    L2:=STR2NUM(STR);
+    
+   STR:=GETFIELD(204);
+    D2:=STR2NUM(STR);
+    
+   STR:=GETFIELD(205);
+    SL:=STR2NUM(STR);
+    
+   STR:=GETFIELD(206);
+    GC:=STR2NUM(STR);
+
+   STR:=GETFIELD(207);
+    AP1:=STR2NUM(STR);
+    
+   STR:=GETFIELD(208);
+    AP2:=STR2NUM(STR);
+
+   STR:=GETFIELD(209);
+    AP3:=STR2NUM(STR);
+    
+   STR:=GETFIELD(210);
+    AP4:=STR2NUM(STR);
+    
+   STR:=GETFIELD(211);
+    AP5:=STR2NUM(STR);
+    
+   STR:=GETFIELD(212);
+    AP6:=STR2NUM(STR);
+    
+   STR:=GETFIELD(213);
+    AP7:=STR2NUM(STR);
+
+GetSelChoice(214,0,zzz,str);
+S:=STR;
+    
+       STR:=GETFIELD(901);
+   TIRI:=STR2NUM(STR);{チリ寸法に変更}
+
+   STR:=GETFIELD(215);
+    GN:=STR;
+    
+   STR:=GETFIELD(216);
+    GW:=STR2NUM(STR);
+    
+   STR:=GETFIELD(217);
+    GD:=STR2NUM(STR);
+    
+   STR:=GETFIELD(218);
+    GR:=STR;
+    
+   STR:=GETFIELD(219);
+    GF:=STR2NUM(STR);
+
+GetSelChoice(220,0,zzz,str);
+C:=STR;
+
+
+GetSelChoice(222,0,zzz,str);
+KO:=STR;
+
+GetSelChoice(223,0,zzz,str);
+KC:=STR;
+
+GetSelChoice(224,0,zzz,str);
+KB:=STR;
+
+CLRDIALOG;
+
+
+ if item=1 then 
+     makedialog:=true
+   else 
+      makedialog:=false;
+  
+END;
+
+
+{ MAIN PROGRAM }
+  
+BEGIN
+ClrMessage;
+   
+TextVerticalAlign(1);
+
+if makedialog=true then
+     BEGIN
+{ﾃﾞﾌｫﾙﾄのﾃｷｽﾄｻｲｽﾞ→寸法線の数字}
+textsize(13);
+
+Message('ｸﾘｯｸしてください｡');
+          getpt(x,y);
+
+ fillpat(0);
+        penpat(2);
+        pensize(8);
+{ﾀﾃ寸法}
+lineardim(X-100,Y,X-100,Y+L1,-350,1,769,259,1);
+
+
+{ﾖｺ寸法}
+lineardim(X+D1-45,Y+L1+50,X+L2,Y+L1+50,500,0,769,259,1);
+
+
+{Jｶｯﾄ}
+lineardim(X+D1-45,Y+L1+50,X+d1,Y+L1+50,200,0,769,259,1);     
+
+{SL寸法}
+lineardim(X+D1-45,Y+L1+50,X+SL,Y+L1+50,300,0,769,259,1);
+{ｼﾝｸ右残り寸法}
+lineardim(X+SL,Y+L1+50,X+L2,Y+L1+50,300,0,769,259,1);
+
+{AP1寸法}
+lineardim(X-100,Y,X-100,Y+AP1,-250,1,769,259,1);
+
+{AP2寸法}
+lineardim(X-100,Y+L1-AP2,X-100,Y+L1,-250,1,769,259,1);
+
+{AP3寸法}
+lineardim(X,Y-50,X+AP3,Y-50,-300,0,769,259,1);
+
+{AP4寸法}
+lineardim(X+D1,Y-50,X+D1-AP4,Y-50,-300,0,769,259,1);
+
+{AP5寸法}
+lineardim(X+L2-AP5,Y+L1+50,X+L2,Y+L1+50,400,0,769,259,1);
+
+{AP6寸法}
+lineardim(X+L2+50,Y+L1,X+L2+50,Y+L1-AP6,300,1,769,259,1);
+
+{AP7寸法}
+lineardim(X+L2+50,Y+L1-D2+AP7,X+L2+50,Y+L1-D2,300,1,769,259,1);
+
+begin
+   SelectObj((T=Dimension));
+h:=FSACTLAYER;
+
+{D1寸法}
+lineardim(X,Y-50,X+D1,Y-50,-450,0,769,259,1);
+{D2寸法}
+lineardim(X+L2+50,Y+L1-D2,X+L2+50,Y+L1,400,1,769,259,1);
+{架台1寸法}
+lineardim(X+AP3,Y-50,X+D1-AP4,Y-50,-300,0,769,259,1);
+{架台2寸法}
+lineardim(X-100,Y+AP1,X-100,Y+L1-AP2,-250,1,769,259,1);
+{架台3寸法}
+lineardim(X+L2+50,Y+L1-D2+AP7,X+L2+50,Y+L1-AP6,300,1,769,259,1);
+{架台4寸法}
+lineardim(X+D1-45,Y+L1+50,X+L2-AP5,Y+L1+50,400,0,769,259,1);
+
+
+end;
+   SelectObj((T=Dimension));
+
+
+        fillpat(1);
+        penpat(2);
+        pensize(12);
+
+
+closepoly;
+poly(x,y,x,y+l1,x+l2,y+l1,x+l2,y+l1-d2,x+d1,y+l1-d2,x+d1,y);
+
+{追加 ｶﾞｽ開口-----------}
+{ｸｯｸﾄｯﾌﾟ品番が空欄の時､開口の表記を図面から消す}
+GG:='';
+IF GG=GN then
+goto 88;
+RECT(X+D1-GF-GD,Y+L1-GC+GW/2,X+D1-GF,Y+L1-GC-GW/2);
+
+
+lineardim(X-100,Y+L1-GC+GW/2,X-100,Y+L1,-150,1,769,259,1);
+lineardim(X-100,Y+L1-GC-GW/2,X-100,Y+L1-GC+GW/2,-150,1,769,259,1);
+{ｸｯｶｰ左残り寸法}
+lineardim(X-100,Y,X-100,Y+L1-GC-GW/2,-150,1,769,259,1);
+
+lineardim(X,Y+L1-GC+GW/2+50,X+D1-GF-GD,Y+L1-GC+GW/2+50,100,0,769,259,1);
+lineardim(X+D1-GF-GD,Y+L1-GC+GW/2+50,X+D1-GF,Y+L1-GC+GW/2+50,100,0,769,259,1);
+lineardim(X+D1-GF,Y+L1-GC+GW/2+50,X+D1,Y+L1-GC+GW/2+50,100,0,769,259,1);
+
+
+{ｺｰﾅｰR}
+
+           penpat(2);
+
+moveto(x+d1-GF,y+L1-GC-GW/2);
+
+PUSHATTRS;
+MARKER(9,0.06,15);
+line(-50,50);
+POPATTRS;
+
+line(0,200);
+
+T:=CONCAT('4-','R',GR);
+ textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(9);
+       textorigin(x+D1-GF-110,y+L1-GC-110);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+88:
+
+
+{工場Jｶｯﾄ}
+           penpat(2);
+
+moveto(x+d1-45,y+l1-d2/2);
+
+PUSHATTRS;
+MARKER(9,0.06,15);
+line(-D1/2,D2);
+POPATTRS;
+
+line(-D1,0);
+
+T:=CONCAT('Jｶｯﾄ工場加工');
+ textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       textorigin(x,y+L1+D2/2+90);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+{ﾊﾞｯｸﾗｲﾝL1}
+    pensize(8);
+penpat(-1);   
+ MOVETO(X+AP3,Y+AP1);
+    LINE(0,L1-AP1-AP2);
+
+{ﾊﾞｯｸﾗｲﾝL2}
+    pensize(8);
+penpat(-1);   
+ MOVETO(X+D1-45,Y+L1-AP6);
+    LINE(L2-D1+45-AP5,0);
+
+{ﾌﾛﾝﾄﾗｲﾝL1}
+     pensize(8);
+     penpat(-1);
+      MOVETO(X+D1-AP4,Y+AP1);
+           LINE(0,L1-AP1-D2+AP7);
+
+{ﾌﾛﾝﾄﾗｲﾝL2}
+     pensize(8);
+     penpat(-1);
+      MOVETO(X+D1-AP4,Y+L1-D2+AP7);
+           LINE(L2-D1+AP4-AP5,0);
+
+{LRﾗｲﾝ}
+        pensize(8);
+           penpat(-1);
+        MOVETO(X+AP3,Y+AP1);
+           LINE(D1-AP3-AP4,0);
+        MOVETO(X+L2-AP5,Y+L1-D2+AP7);
+           LINE(0,D2-AP6-AP7);
+	MOVETO(X+AP3,Y+L1-AP2);
+           LINE(D1-45-AP3, 0);
+
+
+{木口ｶﾗｰ--------}
+penpat(2);
+
+{D1木口}
+
+FillPat(1);
+closepoly;
+poly(x+D1/1.5,y,x+D1/1.5-30,y-60,x+D1/1.5+30,y-60);
+
+T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ:
+',KO);
+    textrotate(#0);
+       textjust(3);
+       textface([]);
+       textsize(11);
+       textorigin(x+D1-100,y-100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+
+FillPat(2);
+closepoly;
+poly(x+D1/3,y+AP1,x+D1/3-30,y+AP1-60,x+D1/3+30,y+AP1-60);
+
+T:=CONCAT('架台ﾎﾞｰﾀﾞｰ:
+',KB);
+    textrotate(#0);
+       textjust(3);
+       textface([]);
+       textsize(11);
+       textorigin(x-50,y-100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+
+
+{天板①右側木口}
+FillPat(1);
+closepoly;
+poly(x+D1/3,y+L1,x+D1/3-30,y+L1+60,x+D1/3+30,y+L1+60);
+
+{
+T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ:
+',KO);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x-50,y+L1+250);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+FillPat(0);
+}
+FillPat(2);
+closepoly;
+poly(x+D1/1.5,y+L1-AP2,x+D1/1.5-30,y+L1-AP2+60,x+D1/1.5+30,y+L1-AP2+60);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ:
+',KB);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+      textorigin(x+D1-150,y+L1+250);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+{天板-1(ﾀﾃ)ﾌﾛﾝﾄ木口}
+
+FillPat(1);
+closepoly;
+poly(x+D1,y+(L1-D2)/1.3,x+D1+60,y+(L1-D2)/1.3-30,x+D1+60,y+(L1-D2)/1.3+30);
+
+{T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ:
+',KO);
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+D1+80,y+(L1-D2)/1.3);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+FillPat(2);
+closepoly;
+poly(x-AP4+D1,y+(L1-D2)/3,x-AP4+D1+60,y+(L1-D2)/3-30,x-AP4+D1+60,y+(L1-D2)/3+30);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ:
+',KB);
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+D1+80,y+(L1-D2)/3);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+{天板-1(ﾀﾃ)ﾊﾞｯｸ木口}
+FillPat(1);
+closepoly;
+poly(x,y+L1/3,x-60,y+L1/3-30,x-60,y+L1/3+30);
+
+{T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ:
+',KO);
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x-250,y+L1/3);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+FillPat(2);
+closepoly;
+poly(x+AP3,y+L1/1.5,x+AP3-60,y+L1/1.5-30,x+AP3-60,y+L1/1.5+30);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ:
+',KB);
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x-250,y+L1/1.5);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+{天板-2(ﾖｺ)ﾌﾛﾝﾄ木口}
+
+FillPat(1);
+closepoly;
+poly(x+(L2-D1)/1.5+D1,y+L1-D2,x+(L2-D1)/1.5+D1-30,y+L1-D2-60,x+(L2-D1)/1.5+D1+30,y+L1-D2-60);
+
+{T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ:
+',KO);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+(L2-D1)/1.5+D1,y+L1-D2-100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+FillPat(2);
+closepoly;
+poly(x+(L2-D1)/3+D1,y+L1-D2+AP7,x+(L2-D1)/3+D1-30,y+L1-D2+AP7-60,x+(L2-D1)/3+D1+30,y+L1-D2+AP7-60);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ:
+',KB);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+(L2-D1)/3+D1,y+L1-D2-100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+{天板-2(ﾖｺ)ﾊﾞｯｸ木口}
+FillPat(1);
+closepoly;
+poly(x+(L2-D1)/3+D1,y+L1,x+(L2-D1)/3+D1-30,y+L1+60,x+(L2-D1)/3+D1+30,y+L1+60);
+
+{
+T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ:
+',KO);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+(L2-D1)/3+D1,y+L1+250);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+FillPat(2);
+closepoly;
+poly(x+(L2-D1)/1.5+D1,y+L1-AP6,x+(L2-D1)/1.5+D1-30,y+L1-AP6+60,x+(L2-D1)/1.5+D1+30,y+L1-AP6+60);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ:
+',KB);
+
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(11);
+      textorigin(x+(L2-D1)/1.5+D1,y+L1+250);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+{天板-2(ﾖｺ)右側ｴﾝﾄﾞ木口}
+
+FillPat(1);
+closepoly;
+poly(x+L2,y+L1-D2/3,x+L2+60,y+L1-D2/3-30,x+L2+60,y+L1-D2/3+30);
+
+{T:=CONCAT('ｱｯﾊﾟｰﾎﾞｰﾀﾞｰ:
+',KO);
+
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+L2+100,y+L1-50);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+FillPat(0);
+}
+FillPat(2);
+closepoly;
+poly(x+L2-AP5,y+L1-D2/1.5,x+L2-AP5+60,y+L1-D2/1.5-30,x+L2-AP5+60,y+L1-D2/1.5+30);
+
+{T:=CONCAT('架台ﾎﾞｰﾀﾞｰ:
+',KB);
+
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(11);
+       textorigin(x+L2+100,y+L1-D2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+}
+FillPat(0);
+
+
+{Jｶｯﾄ}
+        pensize(6);
+           penpat(2);
+ begingroup; 
+ moveto(x+d1,y+l1-d2);
+line(-45,45);
+
+moveto(x+d1-45,y+l1-d2+45);
+line(0,d2-45);
+EndGroup;
+
+{ｼﾝｸ}
+
+
+IF  s='JST800B' then
+begin
+AS:=71;
+SF:=TIRI+AS;
+symbol('JST800B',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+IF  s='KHB800HL-10' then
+begin
+AS:=80;
+SD:=435;
+SF:=TIRI+AS;
+symbol('KHB800HL-10',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+IF  s='KHB700HL-10' then
+begin
+AS:=80;
+SD:=435;
+SF:=TIRI+AS;
+symbol('KHB700HL-10',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+IF  s='KHB600HL-10' then
+begin
+AS:=80;
+SD:=400;
+SF:=TIRI+AS;
+symbol('KHB600HL-10',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+IF  s='JBA800PR' then
+begin
+AS:=72;
+SF:=TIRI+AS;
+symbol('JBA800PR',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+IF  s='JBA800PL' then
+begin
+AS:=72;
+SF:=TIRI+AS;
+symbol('JBA800PL',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+IF  (s='BSS310R') AND (D2>450) then
+begin
+AS:=80;
+SD:=310;
+SF:=TIRI+AS;
+symbol('BSS310R',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+IF  (s='BSS310R') AND (D2<=450) then
+begin
+AS:=64;
+SD:=310;
+SF:=TIRI+AS;
+symbol('BSS310R',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+IF  (s='BSS310L') AND (D2>450) then
+begin
+AS:=80;
+SF:=TIRI+AS;
+SD:=310;
+symbol('BSS310L',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+IF  (s='BSS310L') AND (D2<=450) then
+begin
+AS:=64;
+SD:=310;
+SF:=TIRI+AS;
+symbol('BSS310L',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+IF  (s='BSS310T')  then
+begin
+AS:=69;
+SD:=400;
+SF:=TIRI+AS;
+symbol('BSS310T',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+IF  (s='ACT800BK')  then
+begin
+AS:=67;
+SF:=TIRI+AS;
+symbol('ACT800BK',X+SL,Y+L1-D2+SF,#0);
+goto 222;
+end;
+
+
+222:
+
+{ｼﾝｸｾﾝﾀｰﾗｲﾝ}
+        pensize(8);
+           penpat(-6);
+MOVETO(X+SL,Y+L1+100);
+LINE(0,-D2-150);
+{ｼﾝｸﾌﾛﾝﾄ寸法}
+lineardim(X+SL,Y+L1-D1,X+SL,Y+L1-D1+SF,100,1,769,259,1);
+
+IF  (s='KHB800HL-10')  OR  (s='KHB700HL-10')  OR  (s='KHB600HL-10')  OR (s='BSS310R')  OR (s='BSS310L')   then
+begin
+
+
+       textsize(10);
+
+
+Lineardim(X+SL,Y+L1-D2+SF+SD,X+SL,Y+L1-D2+SF+SD+55,-200,1,769,259,1); {WD 天板奥-水栓穴の間の寸法}
+Lineardim(X+SL,Y+L1-D2+SF+SD+55,X+SL,Y+L1,-200,1,769,259,1); {ｼﾝｸ-水栓穴の寸法}
+
+T:=CONCAT('WD');
+ textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(8);
+       textorigin(X+SL-330,Y+L1-D2+SF+SD+30+(D2-(SF+SD))/2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+end;
+
+
+
+IF   (s='BSS310T')  then
+begin
+
+Lineardim(X+SL,Y+L1-D2+SF+SD,X+SL,Y+L1-D2+SF+SD+63,-200,1,769,259,1); {WD 天板奥-水栓穴の間の寸法}
+Lineardim(X+SL,Y+L1-D2+SF+SD+63,X+SL,Y+L1,-200,1,769,259,1); {ｼﾝｸ-水栓穴の寸法}
+
+T:=CONCAT('WD');
+ textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(8);
+       textorigin(X+SL-330,Y+L1-D2+SF+SD+30+(D2-(SF+SD))/2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+end;
+
+{ｼﾝｸｾﾝﾀｰﾗｲﾝ}
+        pensize(8);
+           penpat(-6);
+MOVETO(X+SL,Y+L1+100);
+LINE(0,-D2-150);
+
+{ﾀﾃ寸法}
+
+T:=CONCAT('L1=');
+    textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(13);
+       textorigin(x-550+100-100,y+L1/2-200);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+{ﾖｺ寸法}
+T:=CONCAT('SL=');
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(13);
+       textorigin(x+(SL-D1)/2+D1-200,y+L1+430);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+T:=CONCAT('L1=');
+    textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(13);
+       textorigin(x+D1+(L2-D1-45-35)/2-180,y+L1+740-100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+{Jｶｯﾄ}
+T:=CONCAT('J');
+     textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(13);
+       textorigin(x+D1+60-170,y+L1+350);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+{ｼﾝｸ品名}
+
+T:=S;
+     textrotate(#0);
+       textjust(2);
+       textface([BOLD]);
+       textsize(14);
+       textorigin(x+SL,y+L1-D2+250);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+{追加 ｶﾞｽ開口-------}
+GG:='';
+IF GG=GN then
+goto 77;
+T:=CONCAT('ｸｯｸﾄｯﾌﾟ');
+ textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       textorigin(x+D1-GF-GD,Y+L1-GC);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+T:=CONCAT(GN);
+ textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(10);
+       textorigin(x+D1-GF-300,Y+L1-GC);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+77:
+
+
+{ﾜｰｸﾄｯﾌﾟ番号}
+T:='①';
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(25);
+       textorigin(X+D1/2,Y+L1-D2/2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+T:='②';
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(25);
+       textorigin(X+L2-200,Y+L1-D2/2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+{ﾜｰｸﾄｯﾌﾟ  ﾄｯﾌﾟｶﾗｰ}
+{T:=CONCAT('ｱｯﾊﾟｰﾄｯﾌﾟ:',C);
+ textrotate(#90);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       textorigin(x+50,y+L1-400);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+T:=CONCAT('ｱｯﾊﾟｰﾄｯﾌﾟ:',C);
+ textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       textorigin(x+L2-400,y+L1-50);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+}
+T:=CONCAT('※架台表裏面:
+',KC);
+ textrotate(#0);
+       textjust(3);
+       textface([]);
+       textsize(12);
+       textorigin(x+L2/2+D1,y+L1/2-D2/2+200);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+T:=CONCAT('ﾌﾛﾝﾄ');
+ textrotate(#0);
+       textjust(2);
+       textface([BOLD]);
+       textsize(15);
+       textorigin(x+L2/2+D1,y+L1/2-D2/2);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+ClrMessage;
+   textsize(10);
+popattrs;
+Group;
+
+{上部ﾃｷｽﾄ}
+
+T:=S;
+ textrotate(#0);
+       textjust(2);
+       textface([BOLD]);
+       textsize(14);
+       textorigin(1220,2260);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+T:=CONCAT('フェニックス');
+ textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(14);
+       textorigin(620,2260);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+IF (D1=150) or ((D1>150) and (D1<451))  then T1:='045';
+IF (D1=451) or ((D1>451) and (D1<651))  then T1:='065';
+IF (D1=651) or ((D1>651) and (D1<911))  then T1:='091';
+IF (D1=911) or ((D1>911) and (D1<1034))  then T1:='103';
+
+IF (D2=150) or ((D2>150) and (D2<451))  then T2:='045';
+IF (D2=451) or ((D2>451) and (D2<651))  then T2:='065';
+IF (D2=651) or ((D2>651) and (D2<911))  then T2:='091';
+IF (D2=911) or ((D2>911) and (D2<1034))  then T2:='103';
+
+BEGIN
+BeginGroup;
+{ｸｯｸﾄｯﾌﾟ品番が空欄の時､品番のG付を消す}
+GG2:=', G付';
+IF GG=GN then GG2:='';
+
+T:=CONCAT('① FTL',T1,'-',C,', L1=',NUM2STRF(L1), GG2);
+ textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(15);
+       textorigin(140+20,2140-300+100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+T:=CONCAT('② FTL',T2,'-',C,', L1=',NUM2STRF(L2-D1+45),', S付');
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(15);
+       textorigin(140+20,2140-150-300+100);
+       fillpat(0);
+     begintext;
+       t
+      endtext;
+
+
+EndGroup;
+
+END;
+END; 
+popattrs;
+99:
+END;
+run(FTL_L_JT_SR);

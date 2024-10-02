@@ -1,0 +1,373 @@
+procedure TSPA2_LINE;
+LABEL 10,99,88;
+
+CONST
+	cMarginX=270+230;
+	cMarginY=50;
+VAR
+	done,abort,rtype,ltype:boolean;
+	L,D,a,b,x,y:REAL;
+	T,str:STRING;
+     item:integer;
+LK,RK:boolean;
+
+function makedialog:boolean;
+var
+	dummy,sh,sv:INTEGER;
+     item:integer;
+BEGIN
+pushattrs;
+pushattrs;
+
+
+	GetScreen(dummy,dummy,sh,sv);
+	sh:=sh div 2;
+	sv:=sv div 2;
+	BeginDialog(1,1,sh-cMarginX div 2,sv-cMarginX div 2,sh+cMarginY div 2,sv+cMarginY div 2);
+			AddButton('OK',01,1,20+20,200,90+20,230);
+			AddButton('Cancel',02,1,130,200,200,230);
+   
+          AddField('    　　　　   - KITCHEN HOUSE -',40,1,10,1,200,21);
+			AddField('    　　　　   ∮ TSP-A2設計用紙',41,1,10,20,200,40);
+			AddField('♪ 巾寸法'    ,11,1,8,65,140+50,80);
+			AddField('♪ 奥行寸法',12,1,8,85,140+50,100);
+
+			AddField('1200',21,2,150+50,65,190+50,80);
+			AddField('338',22,2,150+50,85,190+50,100);
+
+	EndDialog;
+
+  getdiaLOG(1);
+
+  DONE:=FALSE;
+  ABORT:=FALSE;
+
+
+
+REPEAT
+    DIALOGEVENT(ITEM);
+
+      IF ITEM=01 THEN 
+            DONE:=TRUE;
+      IF ITEM=02 THEN  BEGIN
+            DONE:=TRUE;
+            ABORT:=TRUE;
+
+       END;
+
+UNTIL DONE;
+   
+   STR:=GETFIELD(21);
+    L:=STR2NUM(STR);
+   STR:=GETFIELD(22);
+    D:=STR2NUM(STR);
+
+CLRDIALOG;
+
+
+ if item=01 then 
+     makedialog:=true
+   else 
+      makedialog:=false;
+  
+END;
+
+
+{ MAIN PROGRAM }
+
+  
+BEGIN
+PenSize(6);
+textsize(12);
+textjust(1);
+TextVerticalAlign(5);
+
+ClrMessage;
+   
+if makedialog=true then
+     BEGIN
+
+  
+    ClrMessage;
+
+dselectall;
+     getpt(x,y);
+
+
+fillpat(0);
+penpat(2);
+
+BeginGroup;
+
+rect(x,y+D,x+L,y);
+{Φ23ザグリ}
+Oval(x+16,y+D-47.5,x+16+23,y+D-47.5-23);
+Oval(x+L-16,y+D-47.5,x+L-16-23,y+D-47.5-23);
+
+{ザグリ縦中心線}
+PenSize(4);
+openpoly;
+poly(x+27.5,Y+D-32,x+27.5,Y+D-85);
+openpoly;
+poly(x+L-27.5,Y+D-32,x+L-27.5,Y+D-85);
+PenSize(6);
+
+{ミゾ破線}
+penpat(-1);
+
+RRect(x+30,Y+D-50,x+L-30,Y+D-50-18,18,18);
+penpat(2);
+
+{木口仕上}
+PenSize(4);
+{フロント木口 △}
+closepoly;
+poly(x+L/2,y,x+L/2-20,y-50,x+L/2+20,y-50);
+{左側木口 △}
+closepoly;
+poly(x,y+D/2,x-50,y+D/2+20,x-50,y+D/2-20);
+{右側木口 △}
+closepoly;
+poly(x+L,y+D/2,x+L+50,y+D/2+20,x+L+50,y+D/2-20);
+{バック木口 △}
+closepoly;
+poly(x+L/2,y+D,x+L/2-20,y+D+50,x+L/2+20,y+D+50);
+
+{寸法線---------------}
+PenSize(4);
+
+{ﾖｺ寸法線}
+lineardim(x,y+D+10,x+27.5,y+D-50,150,0,769,259,1);
+lineardim(x+L,y+D+10,x+L-27.5,y+D-50,150,0,769,259,1);
+
+lineardim(x,y-10,x+L,y-10,-120,0,769,259,1);
+{ﾀﾃ寸法線}
+lineardim(x+L+10,y+D,x+L+10,y+D-59,190,1,769,259,1);
+
+lineardim(x+L+10,y+D-59,x+L+10,y,190,1,769,259,1);
+
+lineardim(x+L+10,y+D,x+L+10,y,290,1,769,259,1);
+
+{断面方向記号}
+PenSize(4);
+openpoly;
+poly(x-65,Y+D-59,x-65,Y+D-59+135,x-65-20,Y+D-59+135-40);
+       textsize(16);
+ 	textjust(2);
+	textface([bold]);
+      textorigin(x-65,Y+D-59+130);
+begintext;
+'A'
+endtext;
+
+openpoly;
+poly(x+L+65,Y+D-59,x+L+65,Y+D-59+135,x+L+65+20,Y+D-59+135-40);
+       textsize(16);
+	textjust(2);
+	textface([bold]);
+       textorigin(x+L+90,Y+D-59+130);
+begintext;
+'A´'
+endtext;
+
+penpat(-6);
+moveto(x-65,Y+D-59);
+        line(65*2+L,0);
+penpat(2);
+textsize(12);
+textface([]);
+PenSize(6);
+{引出し線}
+PenSize(4);
+
+BeginGroup;
+openpoly;
+poly(x+37,Y+D-52,x+180,Y+D+100,x+530,Y+D+100);
+       textsize(12);
+       Textjust(4);
+	textorigin(x+190,Y+D+100);
+begintext;
+'2-Φ23 D13'
+endtext;
+EndGroup;
+
+
+
+PenSize(6);
+
+{図面上テキスト}
+T:=CONCAT('上面
+（ﾗﾍﾞﾙ貼付面）');
+   textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       TextVerticalAlign(3);
+	textorigin(x+L/2,y+D/2);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+
+
+{下面平面図（原点950mm下にずらす）-------------------}
+y:=y-950;
+
+
+rect(x,y+D,x+L,y);
+{ミゾ}
+RRect(x+30,Y+D-50,x+L-30,Y+D-50-18,18,18);
+
+
+{寸法線---------------}
+PenSize(4);
+
+{ﾖｺ寸法線}
+lineardim(x+30,y+D-50,x+39,y+D-50,200,0,769,259,1);
+lineardim(x+39,y+D-50,x+L-39,y+D-50,200,0,769,259,1);
+lineardim(x+L-39,y+D-50,x+L-30,y+D-50,200,0,769,259,1);
+
+lineardim(x,y+D,x+30,y+D,290-40,0,769,259,1);
+lineardim(x+30,y+D,x+L-30,y+D,290-40,0,769,259,1);
+lineardim(x+L-30,y+D,x+L,y+D,290-40,0,769,259,1);
+
+
+lineardim(x,y-10,x+L,y-10,-150,0,769,259,1);
+{ﾀﾃ寸法線}
+lineardim(x-10,y+D,x-10,y+D-50,-120,1,769,259,1);
+
+lineardim(x+10,y+D-50,x+10,y+D-68,-200,1,769,259,700);
+lineardim(x-10,y+D-68,x-10,y,-120,1,769,259,1);
+
+lineardim(x-10,y+D,x-10,y,-250,1,769,259,1);
+
+{引出し線}
+PenSize(4);
+
+BeginGroup;
+openpoly;
+poly(x+L-100,Y+D-65,x+L+60,Y+D-290,x+L+360,Y+D-290);
+       textsize(12);
+       Textjust(4);
+	TextVerticalAlign(5);
+	textorigin(x+L+100,Y+50);
+begintext;
+'ﾐｿﾞ加工
+W18 D12'
+endtext;
+EndGroup;
+
+BeginGroup;
+openpoly;
+poly(x-130,Y+D+60,x+32,Y+D-53);
+       textsize(12);
+       Textjust(4);
+	TextRotate(#-36);
+	TextVerticalAlign(5);
+	textorigin(x-130,Y+D+60);
+begintext;
+'R9'
+endtext;
+EndGroup;
+
+BeginGroup;
+openpoly;
+poly(x+L-32,Y+D-65,x+L+86,Y+D-152);
+       textsize(12);
+       Textjust(4);
+	TextRotate(#-36);
+	TextVerticalAlign(5);
+	textorigin(x+L+31,Y+D-103);
+begintext;
+'R9'
+endtext;
+EndGroup;
+
+PenSize(6);
+
+{図面上テキスト}
+T:=CONCAT('（ｱﾙﾐﾌﾟﾛﾌｧｲﾙL=',L-80,'）');
+   textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       TextVerticalAlign(5);
+	textorigin(x+L/2,y+D+75);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+T:=CONCAT('下面');
+   textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       TextVerticalAlign(3);
+	textorigin(x+L/2,y+D/2);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+
+
+EndGroup;
+
+{断面図ミゾ寸法}
+T:=CONCAT(L-60);
+   textrotate(#0);
+       textjust(2);
+       textface([]);
+       textsize(12);
+       TextVerticalAlign(5);
+	textorigin(-70,-1675);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+
+
+{上部テキスト-----------------------}
+
+
+{発注数量表記}
+BeginGroup;
+
+T:=CONCAT('[ ','L',L,'×D',D,'×t19 ] ×１枚');
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(16);
+       textorigin(-60,1170);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+
+T:=CONCAT('(LED埋込ﾗｲﾝ照明用ﾐｿﾞ加工・配線穴加工付)');
+   textrotate(#0);
+       textjust(1);
+       textface([]);
+       textsize(14);
+       textorigin(-80,1050);
+       fillpat(0);
+     begintext;
+      T
+      endtext;
+
+EndGroup;
+
+  
+ ClrMessage;
+redrawall;
+
+pensize(8);
+fillpat(0);
+penpat(2);
+
+settool(-128);
+end;
+TextVerticalAlign(1);
+popattrs;
+END;
+
+run(TSPA2_LINE);
